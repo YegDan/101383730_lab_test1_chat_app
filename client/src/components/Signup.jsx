@@ -31,65 +31,64 @@ export default function Signup() {
 
   return (
     <>
-    <h1>Signup</h1>
-    <div className="container mt-5">
-      <form onSubmit={handleSubmit}>
-    
-
-        <div className="form-group">
-          <label htmlFor="username">Username</label>
-          <input
-            type="text"
-            className="form-control"
-            id="username"
-            name="username"
-            value={formData.username}
-            onChange={handleChange}
-            required
-          />
-        </div>
-
-        <div className="form-group">
-          <label htmlFor="firstName">First Name</label>
-          <input
-            type="text"
-            className="form-control"
-            id="firstName"
-            name="firstName"
-            value={formData.firstName}
-            onChange={handleChange}
-            required
-          />
-        </div>
-
-        <div className="form-group">
-            <label htmlFor="lastName">Last Name</label>
+      <h1>Signup</h1>
+      <div className="container mt-5">
+        <form onSubmit={handleSubmit} className='form'>
+          <div className="form-group">
+            <label className="form-label" htmlFor="username">Username</label>
             <input
-                type="text"
-                className="form-control"
-                id="lastName"
-                name="lastName"
-                value={formData.lastName}
-                onChange={handleChange}
-                required
+              type="text"
+              className="form-field"
+              id="username"
+              name="username"
+              value={formData.username}
+              onChange={handleChange}
+              required
             />
-        </div>
+          </div>
 
-        <div className="form-group">
-          <label htmlFor="password">Password</label>
-          <input
-            type="password"
-            className="form-control"
-            id="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <button type="submit" className="btn btn-primary">Submit</button>
+          <div className="form-group">
+            <label className="form-label" htmlFor="firstName">First Name</label>
+            <input
+              type="text"
+              className="form-field"
+              id="firstName"
+              name="firstName"
+              value={formData.firstName}
+              onChange={handleChange}
+              required
+            />
+          </div>
+
+          <div className="form-group">
+            <label className="form-label" htmlFor="lastName">Last Name</label>
+            <input
+              type="text"
+              className="form-field"
+              id="lastName"
+              name="lastName"
+              value={formData.lastName}
+              onChange={handleChange}
+              required
+            />
+          </div>
+
+          <div className="form-group">
+            <label className="form-label" htmlFor="password">Password</label>
+            <input
+              type="password"
+              className="form-field"
+              id="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <button type="submit" className="btn btn-primary">Submit</button>
         </form>
-        </div>
+      </div>
+
     </>
   )
 }

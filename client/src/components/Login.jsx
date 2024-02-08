@@ -1,8 +1,12 @@
 import React from 'react'
 import { useState } from 'react'
+
+import { useAuth } from '../AuthContext'
 import axios from 'axios'
 
 export default function Login() {
+    
+    const { setUsername } = useAuth()
     const [formData, setFormData] = useState({
         username: '',
         password: ''
@@ -17,6 +21,8 @@ export default function Login() {
             if(res.status === 200) {
                 console.log('User logged in')
                 const token = res.data.token
+                localStorage.setItem('token', token)
+                setUsername(formData.username)
             }else {
                 console.log(`Status: ${res.status}`)
             }
@@ -27,13 +33,13 @@ export default function Login() {
     }
   return (
     <>
-    <h1>Login</h1>
-    <form onSubmit={handleSubmit}>
+    <h1 >Login</h1>
+    <form onSubmit={handleSubmit} className='form'>
         <div className="form-group">
-            <label htmlFor="username">Username</label>
+            <label className="form-label" htmlFor="username">Username</label>
             <input
                 type="text"
-                className="form-control"
+                className="form-field"
                 id="username"
                 name="username"
                 value={formData.username}
@@ -42,10 +48,10 @@ export default function Login() {
             />
         </div>
         <div className="form-group">
-            <label htmlFor="password">Password</label>
+            <label className="form-label" htmlFor="password">Password</label>
             <input
                 type="password"
-                className="form-control"
+                className="form-field"
                 id="password"
                 name="password"
                 value={formData.password}

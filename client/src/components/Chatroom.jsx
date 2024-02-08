@@ -1,64 +1,92 @@
-import React from 'react'
-import io from 'socket.io-client'
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react';
+import io from 'socket.io-client';
+import { useAuth } from '../AuthContext';
 
 export default function Chatroom() {
-  const [currentRoom, setRoom] = useState('room1');
-
   const [myMessage, setMyMessage] = useState('');
+  const [currentRoom, setRoom] = useState('devops');
+  const [changeRoom, setChangeRoom] = useState(false); 
+  const { username } = useAuth();
   const [messages, setMessages] = useState([]);
-  const [ioClient] = useState(() => io.connect('http://localhost:8081'));
+  const ioClient = io.connect('http://localhost:8081'); 
 
   useEffect(() => {
 
-    ioClient.on('receive_message', (data) => {
-      setMessages((prevMessages) => [...prevMessages, data.message]);
+    ioClient.emit('join_room', currentRoom, username);
+
+    ioClient.on('receive_message', (message) => {
+      setMessages((prevMessages) => [...prevMessages, message]);
     });
 
-    
+    ioClient.on('load_previous_messages', (previousMessages) => {
+      setMessages(previousMessages);
+    });
+
+  
     return () => {
-      ioClient.off('receive_message');
+      ioClient.emit('leave_room', currentRoom, username);
       ioClient.disconnect();
     };
-  }, [ioClient]);
+  }, [currentRoom, username]);
+
+  const handleRoomChange = (e) => {
+    const newRoom = e.target.value;
+    setRoom(newRoom); 
+    setMessages([])
+    setChangeRoom(false); 
+
+  };
 
   const sendMessage = () => {
-    const room = 'room1';
-    ioClient.emit('send_message', { message: myMessage, room });
-   
-    setMyMessage('');
+    const messageData = {
+      from_user: username,
+      room: currentRoom,
+      message: myMessage,
+    };
+    ioClient.emit('send_message', messageData);
+    setMyMessage(''); 
   };
 
   return (
-    <div>
-      <h1>Chatroom</h1>
-      <div>
-        <label htmlFor="room-selection">Choose a room:</label>
+    <div className="chatroom-container">
+    <h1 className="chatroom-header">Chatroom</h1>
+    <h2 className="current-room-header">Current Room: {currentRoom}</h2>
+    {changeRoom ? (
+      <div className="room-selection-container">
+        <label className="room-selection-label" htmlFor="room-selection">Choose a room:</label>
         <select
           id="room-selection"
+          className="room-selection-dropdown"
           value={currentRoom}
-          onChange={(e) => setCurrentRoom(e.target.value)}
+          onChange={handleRoomChange}
         >
-          <option value="">Select a room</option>
-          <option value="room1">Room 1</option>
-          <option value="room2">Room 2</option>
-          <option value="room3">Room 3</option>
-          {/* Add more rooms as needed */}
+          <option value="devops">Devops</option>
+          <option value="cybersecurity">Cybersecurity</option>
+          <option value="cloud">Cloud Computing</option>
         </select>
       </div>
+    ) : (
+      <button className="change-room-button" onClick={() => setChangeRoom(true)}>Change Room</button>
+    )}
+    <div className="message-input-container">
       <input
         type="text"
+        className="message-input-field"
         placeholder="Enter your message"
         value={myMessage}
         onChange={(e) => setMyMessage(e.target.value)}
       />
-      <button onClick={sendMessage}>Send</button>
-      <ul>
-        {messages.map((message, index) => (
-          <li key={index}>{message}</li>
-        ))}
-      </ul>
+      <button className="send-message-button" onClick={sendMessage}>Send</button>
     </div>
+    <ul className="message-list">
+      {messages.map((message, index) => (
+        <li className="message-item" key={index}>
+          <strong>{message.from_user}: </strong>{message.message}
+          <span className="message-timestamp"> {new Date(message.date_sent).toLocaleTimeString()}</span>
+        </li>
+      ))}
+    </ul>
+  </div>
+
   );
-  
 }
