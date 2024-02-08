@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Socket.io Test</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const socket = io(); // This initializes the socket.io client
+
+            // Handle the event for a user joining a room
+            socket.on('userJoined', (msg) => {
+                console.log(msg);
+                const messages = document.getElementById('messages');
+                messages.innerHTML += `<li>${msg}</li>`;
+            });
+
+            // Function to join a room
+            function joinRoom() {
+                const roomName = document.getElementById('roomName').value;
+                socket.emit('joinRoom', roomName);
+                console.log(`Joined room ${roomName}`);
+            }
+
+            document.getElementById('joinRoomBtn').addEventListener('click', joinRoom);
+        });
+    </script>
+</head>
+<body>
+    <input type="text" id="roomName" placeholder="Enter room name">
+    <button id="joinRoomBtn">Join Room</button>
+
+    <ul id="messages"></ul>
+</body>
+</html>
